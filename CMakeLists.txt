@@ -511,7 +511,7 @@ if(HAVE_WL_VERSION_SCRIPT)
   sdl_shared_link_options("-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/src/dynapi/SDL_dynapi.sym")
 else()
   if((LINUX AND LIBC_IS_GLIBC) OR ANDROID)
-    message(FATAL_ERROR "Linker does not support '-Wl,--version-script=xxx.sym'. This is required on the current host platform (${SDL_CMAKE_PLATFORM}).")
+    message(FATAL_ERROR "Linker does not support '-Xlinker --version-script -Xlinker xxx.sym'. This is required on the current host platform (${SDL_CMAKE_PLATFORM}).")
   endif()
 endif()
 
