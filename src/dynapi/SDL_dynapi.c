@@ -594,6 +594,9 @@ static void SDL_InitDynamicAPILocked(void)
     // we intentionally never close the newly-loaded lib, of course.
 }
 
+static bool already_initialized = false;
+static SDL_SpinLock lock = 0;
+
 static void SDL_InitDynamicAPI(void)
 {
     /* So the theory is that every function in the jump table defaults to
@@ -607,14 +610,34 @@ static void SDL_InitDynamicAPI(void)
      *  SDL_CreateThread() would also call this function before building the
      *  new thread).
      */
-    static bool already_initialized = false;
 
-    static SDL_SpinLock lock = 0;
     SDL_LockSpinlock_REAL(&lock);
 
     if (!already_initialized) {
         SDL_InitDynamicAPILocked();
         already_initialized = true;
+    }
+
+    SDL_UnlockSpinlock_REAL(&lock);
+}
+
+static void SDL_UnloadDynamicAPILocked(void)
+{
+    // reset jump table
+#define SDL_DYNAPI_PROC(rc, fn, params, args, ret) jump_table.fn = fn##_DEFAULT;
+#include "SDL_dynapi_procs.h"
+#undef SDL_DYNAPI_PROC
+    
+    unload_sdlapi_library();
+}
+
+static void SDL_UnloadDynamicAPI(void)
+{
+    SDL_LockSpinlock_REAL(&lock);
+
+    if (already_initialized) {
+        SDL_UnloadDynamicAPILocked();
+        already_initialized = false;
     }
 
     SDL_UnlockSpinlock_REAL(&lock);
