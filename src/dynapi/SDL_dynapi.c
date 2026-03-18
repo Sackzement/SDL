@@ -248,15 +248,24 @@ static SDL_DYNAPI_jump_table jump_table = {
 #undef SDL_DYNAPI_PROC_NO_VARARGS
 SDL_DYNAPI_VARARGS(static, _DEFAULT, SDL_InitDynamicAPI())
 
+static void SDL_UnloadDynamicAPI(void);
+
 // Public API functions to jump into the jump table.
 #define SDL_DYNAPI_PROC(rc, fn, params, args, ret) \
     rc SDLCALL fn params                           \
     {                                              \
         ret jump_table.fn args;                    \
     }
+#define SDL_DYNAPI_PROC_SDL_Quit(rc, fn, params, args, ret) \
+    rc SDLCALL fn params                                    \
+    {                                                       \
+        jump_table.fn args;                                 \
+        SDL_UnloadDynamicAPI();                             \
+    }
 #define SDL_DYNAPI_PROC_NO_VARARGS 1
 #include "SDL_dynapi_procs.h"
 #undef SDL_DYNAPI_PROC
+#undef SDL_DYNAPI_PROC_SDL_Quit
 #undef SDL_DYNAPI_PROC_NO_VARARGS
 SDL_DYNAPI_VARARGS(, , )
 

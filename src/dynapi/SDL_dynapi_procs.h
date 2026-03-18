@@ -722,7 +722,11 @@ SDL_DYNAPI_PROC(void,SDL_PushGPUFragmentUniformData,(SDL_GPUCommandBuffer *a, Ui
 SDL_DYNAPI_PROC(void,SDL_PushGPUVertexUniformData,(SDL_GPUCommandBuffer *a, Uint32 b, const void *c, Uint32 d),(a,b,c,d),)
 SDL_DYNAPI_PROC(bool,SDL_PutAudioStreamData,(SDL_AudioStream *a, const void *b, int c),(a,b,c),return)
 SDL_DYNAPI_PROC(bool,SDL_QueryGPUFence,(SDL_GPUDevice *a, SDL_GPUFence *b),(a,b),return)
+#ifdef SDL_DYNAPI_PROC_SDL_Quit
+SDL_DYNAPI_PROC_SDL_Quit(void,SDL_Quit,(void),(),)
+#else
 SDL_DYNAPI_PROC(void,SDL_Quit,(void),(),)
+#endif
 SDL_DYNAPI_PROC(void,SDL_QuitSubSystem,(SDL_InitFlags a),(a),)
 SDL_DYNAPI_PROC(bool,SDL_RaiseWindow,(SDL_Window *a),(a),return)
 SDL_DYNAPI_PROC(size_t,SDL_ReadIO,(SDL_IOStream *a, void *b, size_t c),(a,b,c),return)
